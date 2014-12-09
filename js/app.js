@@ -1,26 +1,32 @@
 $(document).ready(function(){
 	
-	var secretNum, userNum, diff, guessCount;
+	var secretNum, userNum, diff, guessCount, oldGuess;
 
 	function generateNum() {
 	  		return Math.floor(Math.random() * 100 + 1);
-	  	}
+	}
 
 	function newGame() {
 		secretNum = generateNum();
 		$('#count').text(0)
 		$('#guessList').empty();
 		$("#feedback").text("Make your Guess!");
-		console.log("The secret number is " + secretNum);
+		console.log("Psst. The secret number is " + secretNum);
 	}
 
-	 function feedback(userinput) {
+	function feedback(userinput) {
+
+	    oldGuess = parseInt($('#guessList li').last().html());
+
+	    guessCount = parseInt($('#count').text());
 
 		if (userinput > 0 && userinput < 101) {
 
-		  		userinput > secretNum ? diff = userinput- secretNum : diff = secretNum - userinput;
+			if (guessCount === 0) {
 
-				if (secretNum == userinput) {
+				userinput > secretNum ? diff = userinput - secretNum : diff = secretNum - userinput;
+
+				if (secretNum === userinput) {
 			  			$("#feedback").text("You guessed it! It's " + secretNum);
 			  		} else if (diff < 10) {
 			  			$("#feedback").text("Very hot");
@@ -34,17 +40,39 @@ $(document).ready(function(){
 			  			$("#feedback").text("Ice cold");
 			  		}
 
-			  	guessCount = parseInt($('#count').text());
-			  	$('#count').text(guessCount + 1)
-			  	$('#userGuess').val('');
-			  	$('#guessList').append('<li>' + userinput + '</li>');
-		  	
-		  	} else {
-		  		$("#feedback").text("I need a number between 1-100");
-		  		$('#userGuess').val('');
-		  	}
-	 }
+				$('#count').text(guessCount + 1);
+				$('#userGuess').val('');
+				$('#guessList').append('<li>' + userinput + '</li>');
 
+			} else {
+
+			  	var newDiff =  userinput - secretNum;
+				var oldDiff = oldGuess - secretNum;
+				newDiff = Math.sqrt(newDiff * newDiff);
+				oldDiff = Math.sqrt(oldDiff * oldDiff);
+
+				if (secretNum === userinput) {
+					$("#feedback").text("You guessed it! It's " + secretNum);
+				} else if (newDiff < oldDiff) {
+					$("#feedback").text("Warmer");
+				} else if (newDiff > oldDiff) {
+					$("#feedback").text("Colder");
+				} else {
+					$("#feedback").text("About the same");
+				}
+
+				
+				$('#count').text(guessCount + 1);
+				$('#userGuess').val('');
+				$('#guessList').append('<li>' + userinput + '</li>');
+
+			}
+		  	
+		} else {
+		  	$("#feedback").text("I need a number between 1-100");
+		  	$('#userGuess').val('');
+		}
+	}
 
 	newGame();
 	
@@ -69,7 +97,6 @@ $(document).ready(function(){
 	$("#guessButton").click(function(e) {
   		e.preventDefault();
 		userNum = parseInt($("#userGuess").val());
-
   		feedback(userNum);
 
 	});
