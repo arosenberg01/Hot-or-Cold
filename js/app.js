@@ -16,6 +16,13 @@ $(document).ready(function(){
 		console.log("Psst. The secret number is " + secretNum);
 	}
 
+	function nextGuess (userguess) {
+	$('#count').text(guessCount + 1);
+	$('#userGuess').val('');
+	$('#guessList').append('<li>' + userguess + '</li>');
+
+	}
+
 	/*--- Generates correct feedback based on user input --- */
 
 	function feedback(userinput) {
@@ -24,11 +31,11 @@ $(document).ready(function(){
 
 	    guessCount = parseInt($('#count').text());
 
-		if (isNaN(userinput)) { 
+		if ( isNaN(userinput) ||  parseInt(userinput) < 1 || parseInt(userinput) > 100 ) { 
 			$("#feedback").text("I need a number between 1-100");
 		  	$('#userGuess').val('');
 
-		} else if (parseInt(userinput) > 0 && parseInt(userinput) < 101) {
+		} else  {
 
 			userinput = parseInt(userinput);
 
@@ -49,10 +56,8 @@ $(document).ready(function(){
 			  	} else {
 			  			$("#feedback").text("Ice cold");
 			  	}
-
-				$('#count').text(guessCount + 1);
-				$('#userGuess').val('');
-				$('#guessList').append('<li>' + userinput + '</li>');
+			  	
+				nextGuess(userinput);
 
 			} else {
 
@@ -71,17 +76,11 @@ $(document).ready(function(){
 					$("#feedback").text("About the same");
 				}
 
-				$('#count').text(guessCount + 1);
-				$('#userGuess').val('');
-				$('#guessList').append('<li>' + userinput + '</li>');
+				nextGuess(userinput);
 
 			}
 		  	
-		} else {
-
-		  	$("#feedback").text("I need a number between 1-100");
-		  	$('#userGuess').val('');
-		}
+		} 
 	}
 
 	newGame();
